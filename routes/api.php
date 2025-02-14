@@ -19,13 +19,15 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::prefix('/tasks')->group(function(){
-    Route::controller(TaskController::class)->group(function(){
-        Route::get('/index', 'index');
-        Route::post('/store', 'store');
-        Route::get('/edit/{id}', 'edit');
-        Route::put('/update/{id}', 'update');
-        Route::delete('/delete', 'delete');
-        Route::put('/complete/{id}', 'complete');
+Route::middleware(['auth:sanctum'])->group(function(){
+    Route::prefix('/tasks')->group(function(){
+        Route::controller(TaskController::class)->group(function(){
+            Route::get('/index', 'index');
+            Route::post('/store', 'store');
+            Route::get('/edit/{id}', 'edit');
+            Route::put('/update/{id}', 'update');
+            Route::delete('/delete/{id}', 'delete');
+            Route::put('/complete/{id}', 'complete');
+        });
     });
 });
