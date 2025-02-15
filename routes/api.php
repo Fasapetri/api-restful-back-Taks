@@ -19,6 +19,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::post('login', [\App\Http\Controllers\Api\V1\Auth\LoginController::class, 'login'])->middleware('throttle:4,1');
+Route::post('register', [\App\Http\Controllers\Api\V1\Auth\RegisterController::class, 'register']);
+Route::middleware(['auth:sanctum'])->group(function () {
+    //elimina el token
+    Route::post('logout', [\App\Http\Controllers\Api\V1\Auth\LogoutController::class, 'logout']);
+});
+
 Route::middleware(['auth:sanctum'])->group(function(){
     Route::prefix('/tasks')->group(function(){
         Route::controller(TaskController::class)->group(function(){

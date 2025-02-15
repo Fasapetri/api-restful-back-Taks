@@ -9,11 +9,20 @@ use App\Models\Task;
 use App\Traits\ApiResponser;
 use Exception;
 use Illuminate\Http\Request;
+use OpenApi\Annotations as OA;
+
 
 class TaskController extends Controller
 {
     use ApiResponser;
     
+    /**
+     * @OA\Get(
+     *     path="/api/tasks",
+     *     summary="Obtener todas las tareas",
+     *     @OA\Response(response=200, description="Lista de tareas")
+     * )
+     */
     public function index(){
         try{
             $tasks = Task::all();
@@ -33,6 +42,22 @@ class TaskController extends Controller
         }
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/tasks",
+     *     summary="Crear una nueva tarea",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"title", "description", "status"},
+     *             @OA\Property(property="title", type="string", example="Nueva tarea"),
+     *             @OA\Property(property="description", type="string", example="Descripción de la tarea"),
+     *             @OA\Property(property="status", type="string", example="pendiente")
+     *         )
+     *     ),
+     *     @OA\Response(response=201, description="Tarea creada")
+     * )
+     */
     public function store(TaskStoreRequest $request){
         try{
             $task = new Task();
@@ -55,6 +80,16 @@ class TaskController extends Controller
         }
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/tasks/{id}",
+     *     summary="Obtener una tarea por ID",
+     *     tags={"Tasks"},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *     @OA\Response(response=200, description="Tarea encontrada exitosamente"),
+     *     @OA\Response(response=500, description="Error en el servidor")
+     * )
+     */
     public function edit($id){
         try{
             $task = Task::findOrFail($id);
@@ -75,6 +110,24 @@ class TaskController extends Controller
         }
     }
 
+    /**
+     * @OA\Put(
+     *     path="/api/tasks/{id}",
+     *     summary="Actualizar una tarea",
+     *     tags={"Tasks"},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"title", "description"},
+     *             @OA\Property(property="title", type="string"),
+     *             @OA\Property(property="description", type="string")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Tarea modificada exitosamente"),
+     *     @OA\Response(response=500, description="Error en el servidor")
+     * )
+     */
     public function update(TaskUpdateRequest $request, $id){
         try{
             $task = Task::findOrFail($id);
@@ -97,6 +150,16 @@ class TaskController extends Controller
         }
     }
 
+     /**
+     * @OA\Delete(
+     *     path="/api/tasks/{id}",
+     *     summary="Eliminar una tarea",
+     *     tags={"Tasks"},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *     @OA\Response(response=200, description="Tarea eliminada exitosamente"),
+     *     @OA\Response(response=500, description="Error en el servidor")
+     * )
+     */
     public function delete($id){
         try{
             $task = Task::findOrFail($id);
@@ -117,6 +180,16 @@ class TaskController extends Controller
         }
     }
 
+    /**
+     * @OA\Patch(
+     *     path="/api/tasks/{id}/complete",
+     *     summary="Marcar una tarea como completada",
+     *     tags={"Tasks"},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *     @OA\Response(response=200, description="Tarea completada exitosamente"),
+     *     @OA\Response(response=500, description="Error en el servidor")
+     * )
+     */
     public function complete($id){
         try{
             $task = Task::findOrFail($id);

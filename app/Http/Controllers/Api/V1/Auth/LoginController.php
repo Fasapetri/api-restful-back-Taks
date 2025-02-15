@@ -7,14 +7,47 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\Api\Auth\LoginRequest;
+use OpenApi\Annotations as OA;
 
 class LoginController extends Controller
 {
 
     /**
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\ResponseJson
+     * @OA\Post(
+     *     path="/api/v1/auth/login",
+     *     summary="Iniciar sesión de usuario",
+     *     tags={"Auth"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"email", "password"},
+     *             @OA\Property(property="email", type="string", format="email", example="usuario@example.com"),
+     *             @OA\Property(property="password", type="string", format="password", example="password123")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Inicio de sesión exitoso",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="user", type="object",
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="name", type="string", example="Usuario Ejemplo"),
+     *                 @OA\Property(property="email", type="string", format="email", example="usuario@example.com")
+     *             ),
+     *             @OA\Property(property="token", type="string", example="eyJhbGciOiJIUzI1NiIsInR5cCI...")
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="Credenciales inválidas",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string", example="Contraseña o correo invalido"),
+     *             @OA\Property(property="success", type="boolean", example=false)
+     *         )
+     *     ),
+     *     @OA\Response(response=500, description="Error en el servidor",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Algo salió mal"),
+     *             @OA\Property(property="error", type="string", example="Mensaje de error específico")
+     *         )
+     *     )
+     * )
      */
     public function login(LoginRequest $request)
     {
